@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusList | Small tasks. Clear progress.</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Preconnect to Google Fonts for typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Header & Productivity Summary -->
+        <header class="app-header">
+            <div class="brand">
+                <svg class="brand-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="brand-name">FocusList</span>
+            </div>
+            <h1 id="greeting" class="greeting">Good evening, Atharv.</h1>
+            <p class="subtitle">What would you like to accomplish today?</p>
+            
+            <div class="summary-pills">
+                <div class="pill">
+                    <span id="summary-pending" class="pill-number">0</span>
+                    <span class="pill-label">Pending</span>
+                </div>
+                <div class="pill">
+                    <span id="summary-completed" class="pill-number">0</span>
+                    <span class="pill-label">Completed</span>
+                </div>
+                <div class="pill progress-pill">
+                    <div class="progress-bar-bg">
+                        <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!-- Add Task Form -->
+            <section class="add-task-section">
+                <form id="add-task-form" autocomplete="off">
+                    <label for="task-input" class="sr-only">What needs to be done?</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="task-input" 
+                            placeholder="What needs to be done?" 
+                            aria-label="New task input"
+                        >
+                        <button type="submit" id="add-btn" class="btn-primary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                            <span>Add Task</span>
+                        </button>
+                    </div>
+                    <p id="input-error" class="error-msg" aria-live="polite"></p>
+                </form>
+            </section>
+
+            <!-- Pending Tasks -->
+            <section class="task-section">
+                <header class="section-header">
+                    <h2>Pending</h2>
+                    <span id="count-pending" class="count-badge">0</span>
+                </header>
+                
+                <div id="empty-pending" class="empty-state">
+                    <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    <h3>You're all caught up!</h3>
+                    <p>No pending tasks right now.</p>
+                </div>
+
+                <ul id="list-pending" class="task-list" aria-label="Pending tasks"></ul>
+            </section>
+
+            <!-- Completed Tasks -->
+            <section class="task-section completed-section">
+                <header class="section-header">
+                    <h2>Completed</h2>
+                    <span id="count-completed" class="count-badge">0</span>
+                </header>
+                
+                <div id="empty-completed" class="empty-state">
+                    <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <h3>Nothing completed yet.</h3>
+                    <p>Finish a task and your progress will appear here.</p>
+                </div>
+
+                <ul id="list-completed" class="task-list completed-list" aria-label="Completed tasks"></ul>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container" aria-live="assertive"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
