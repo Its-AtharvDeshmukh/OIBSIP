@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atmosphere | Premium Temp Converter</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Inter font mapped to mimic Apple's San Francisco Pro -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Dynamic Atmospheric Background -->
+    <div class="sky-canvas" id="skyCanvas" aria-hidden="true">
+        <div class="sky-gradient" id="skyGradient"></div>
+        <div class="ambient-clouds layer-1"></div>
+        <div class="ambient-clouds layer-2"></div>
+    </div>
+
+    <main class="app-container">
+        <!-- Main Converter Card -->
+        <section class="glass-card converter-core">
+            <header class="card-header">
+                <h1>Atmosphere</h1>
+                <p>Universal Temperature Converter</p>
+            </header>
+
+            <!-- Error Banner (Hidden by default) -->
+            <div class="error-banner" id="errorBanner" role="alert" aria-live="assertive">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span id="errorMessage">Absolute Zero Violation</span>
+            </div>
+
+            <form id="converterForm" class="converter-form" novalidate>
+                <!-- Massive Input Area -->
+                <div class="input-display">
+                    <input 
+                        type="text" 
+                        id="tempInput" 
+                        class="massive-input" 
+                        placeholder="0" 
+                        autocomplete="off"
+                        aria-label="Temperature Value">
+                    <div class="input-line"></div>
+                </div>
+
+                <!-- Custom Segmented Unit Selector -->
+                <div class="segmented-control" role="radiogroup" aria-label="Input Temperature Unit">
+                    <label class="segment">
+                        <input type="radio" name="inputUnit" value="C" checked>
+                        <span class="segment-label">Celsius</span>
+                    </label>
+                    <label class="segment">
+                        <input type="radio" name="inputUnit" value="F">
+                        <span class="segment-label">Fahrenheit</span>
+                    </label>
+                    <label class="segment">
+                        <input type="radio" name="inputUnit" value="K">
+                        <span class="segment-label">Kelvin</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-convert" id="convertBtn">
+                    Convert
+                </button>
+            </form>
+        </section>
+
+        <!-- Results Bento Grid -->
+        <section class="results-grid" id="resultsGrid" aria-live="polite">
+            
+            <article class="bento-card" id="cardC">
+                <div class="bento-header">
+                    <i class="fa-solid fa-temperature-half"></i>
+                    <h2>Celsius</h2>
+                </div>
+                <div class="bento-value">
+                    <span id="valC">--</span><span class="unit-symbol">°</span>
+                </div>
+                <div class="bento-footer" id="formC">Base SI Unit</div>
+            </article>
+
+            <article class="bento-card" id="cardF">
+                <div class="bento-header">
+                    <i class="fa-solid fa-temperature-half"></i>
+                    <h2>Fahrenheit</h2>
+                </div>
+                <div class="bento-value">
+                    <span id="valF">--</span><span class="unit-symbol">°</span>
+                </div>
+                <div class="bento-footer" id="formF">Imperial Scale</div>
+            </article>
+
+            <article class="bento-card" id="cardK">
+                <div class="bento-header">
+                    <i class="fa-solid fa-temperature-empty"></i>
+                    <h2>Kelvin</h2>
+                </div>
+                <div class="bento-value">
+                    <span id="valK">--</span><span class="unit-symbol">K</span>
+                </div>
+                <div class="bento-footer" id="formK">Absolute Scale</div>
+            </article>
+
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
