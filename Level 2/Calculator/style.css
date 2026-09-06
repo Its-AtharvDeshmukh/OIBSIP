@@ -1,0 +1,258 @@
+/* ===========================
+   Design tokens
+=========================== */
+:root {
+  --page-bg-1: #0f1420;
+  --page-bg-2: #1a2138;
+
+  --calculator-background: #171d2e;
+  --calculator-border: #262e46;
+
+  --display-background: #10141f;
+  --display-text: #f4f6fb;
+  --display-secondary-text: #6f7996;
+
+  --button-background: #1f2740;
+  --button-background-hover: #29335290;
+  --button-text: #e7eaf3;
+
+  --operator-color: #ff9f43;
+  --operator-bg: #2a2415;
+  --operator-hover: #3a3220;
+
+  --control-color: #ff6b6b;
+
+  --equals-bg: linear-gradient(135deg, #7c5cff, #5b8cff);
+  --equals-hover: linear-gradient(135deg, #6b4cef, #4a7bef);
+
+  --accent-glow: rgba(124, 92, 255, 0.35);
+
+  --border-radius: 26px;
+  --button-radius: 16px;
+  --gap: 14px;
+}
+
+/* ===========================
+   Reset & base
+=========================== */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: radial-gradient(circle at 20% 15%, var(--page-bg-2), var(--page-bg-1) 60%);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  color: var(--display-text);
+}
+
+/* ===========================
+   Calculator container
+=========================== */
+.calculator {
+  width: 100%;
+  max-width: 380px;
+  background: var(--calculator-background);
+  border: 1px solid var(--calculator-border);
+  border-radius: var(--border-radius);
+  padding: 26px;
+  box-shadow:
+    0 30px 60px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+}
+
+.calculator__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 4px 18px;
+}
+
+.calculator__title {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--display-secondary-text);
+  margin: 0;
+}
+
+.calculator__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--operator-color);
+  box-shadow: 0 0 10px var(--operator-color);
+}
+
+/* ===========================
+   Display
+=========================== */
+.display {
+  background: var(--display-background);
+  border-radius: var(--button-radius);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 24px 20px;
+  margin-bottom: 22px;
+  overflow-x: auto;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.display__expression {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--display-secondary-text);
+  min-height: 20px;
+  white-space: nowrap;
+  overflow-x: auto;
+  max-width: 100%;
+  letter-spacing: 0.02em;
+}
+
+.display__result {
+  font-size: 42px;
+  font-weight: 600;
+  color: var(--display-text);
+  white-space: nowrap;
+  overflow-x: auto;
+  max-width: 100%;
+  transition: opacity 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+
+.display__result.pulse {
+  animation: resultPulse 0.22s ease;
+}
+
+@keyframes resultPulse {
+  0% { opacity: 0.35; transform: translateY(3px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.display__result.error {
+  color: var(--control-color);
+  font-size: 24px;
+}
+
+/* ===========================
+   Buttons grid
+=========================== */
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 66px;
+  gap: var(--gap);
+}
+
+.btn {
+  border: none;
+  border-radius: var(--button-radius);
+  font-size: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  background: var(--button-background);
+  color: var(--button-text);
+  transition: background 0.15s ease, transform 0.08s ease, box-shadow 0.15s ease;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+}
+
+.btn:hover {
+  background: var(--button-background-hover);
+}
+
+.btn:active {
+  transform: scale(0.94);
+}
+
+.btn--zero {
+  grid-column: span 2;
+}
+
+.btn--control {
+  background: transparent;
+  color: var(--control-color);
+  font-weight: 600;
+  border: 1px solid rgba(255, 107, 107, 0.25);
+}
+
+.btn--control:hover {
+  background: rgba(255, 107, 107, 0.1);
+}
+
+.btn--operator {
+  background: var(--operator-bg);
+  color: var(--operator-color);
+  font-weight: 600;
+}
+
+.btn--operator:hover {
+  background: var(--operator-hover);
+}
+
+.btn--equals {
+  grid-row: span 2;
+  background: var(--equals-bg);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 24px;
+  box-shadow: 0 8px 24px var(--accent-glow);
+}
+
+.btn--equals:hover {
+  background: var(--equals-hover);
+}
+
+.btn--equals:active {
+  transform: scale(0.94);
+}
+
+/* ===========================
+   Responsive
+=========================== */
+@media (min-width: 600px) {
+  .calculator {
+    max-width: 400px;
+    padding: 30px;
+  }
+  .display__result {
+    font-size: 46px;
+  }
+}
+
+@media (max-width: 360px) {
+  .calculator {
+    padding: 18px;
+    border-radius: 20px;
+  }
+  .buttons {
+    gap: 9px;
+    grid-auto-rows: 58px;
+  }
+  .btn {
+    font-size: 18px;
+  }
+  .display {
+    padding: 20px 16px;
+    min-height: 88px;
+  }
+  .display__result {
+    font-size: 32px;
+  }
+}
