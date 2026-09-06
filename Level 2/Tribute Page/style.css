@@ -1,0 +1,641 @@
+/* ================================================================
+   1. VARIABLES
+================================================================ */
+:root {
+  --ink: #12111c;          /* the dark of a lab at night, arc-lit */
+  --ink-soft: #1d1c2b;
+  --paper: #f2efe6;        /* warm archival paper — biography, legacy */
+  --paper-deep: #e6e1d2;   /* achievements: a slightly deeper paper */
+  --arc: #b9a4f2;          /* the pale violet of a Tesla coil's discharge */
+  --arc-dim: #7d6fa3;
+  --text-on-ink: #ece9f2;
+  --text-on-ink-muted: #9d9aad;
+  --text-on-paper: #1c1a16;
+  --text-on-paper-muted: #6c6454;
+  --rule-on-paper: rgba(28, 26, 22, 0.14);
+  --rule-on-ink: rgba(236, 233, 242, 0.14);
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-data: "IBM Plex Mono", monospace;
+
+  --measure: 62ch;
+}
+
+/* ================================================================
+   2. RESET
+================================================================ */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--text-on-paper);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+h1, h2, h3, p, blockquote, figure {
+  margin: 0;
+}
+
+/* ================================================================
+   3. TYPOGRAPHY
+================================================================ */
+.hero__name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(3rem, 11vw, 7rem);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  color: var(--text-on-ink);
+}
+
+.section-heading {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  color: var(--text-on-paper);
+  margin-bottom: 2.5rem;
+}
+
+.section-heading--on-dark {
+  color: var(--text-on-ink);
+}
+
+.bio__heading {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  margin: 0.5rem 0 1.25rem;
+  max-width: 22ch;
+}
+
+/* ================================================================
+   4. GLOBAL / LAYOUT HELPERS
+================================================================ */
+section {
+  padding: clamp(4rem, 9vw, 8rem) clamp(1.5rem, 6vw, 4rem);
+}
+
+#biography,
+#achievements,
+#timeline,
+#legacy {
+  scroll-margin-top: 72px;
+}
+
+/* ================================================================
+   5. NAVIGATION
+================================================================ */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: transparent;
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.site-nav.is-solid {
+  background: rgba(18, 17, 28, 0.92);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 1px 0 var(--rule-on-ink);
+}
+
+.site-nav__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.1rem clamp(1.5rem, 6vw, 4rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-nav__mark {
+  font-family: var(--font-data);
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  color: var(--text-on-ink);
+  text-decoration: none;
+}
+
+.site-nav__links {
+  display: flex;
+  gap: clamp(1rem, 3vw, 2.25rem);
+}
+
+.site-nav__links a {
+  color: var(--text-on-ink-muted);
+  text-decoration: none;
+  font-size: 0.92rem;
+  position: relative;
+  padding-bottom: 3px;
+}
+
+.site-nav__links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0%;
+  height: 1px;
+  background: var(--arc);
+  transition: width 0.2s ease;
+}
+
+.site-nav__links a:hover::after,
+.site-nav__links a:focus-visible::after {
+  width: 100%;
+}
+
+.site-nav__links a:hover,
+.site-nav__links a:focus-visible {
+  color: var(--text-on-ink);
+}
+
+/* ================================================================
+   6. HERO
+================================================================ */
+.hero {
+  background: var(--ink);
+  padding-top: clamp(3rem, 8vw, 6rem);
+  padding-bottom: clamp(3rem, 8vw, 6rem);
+  min-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.hero__grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.3fr 0.9fr;
+  gap: clamp(2rem, 6vw, 5rem);
+  align-items: center;
+}
+
+.hero__eyebrow {
+  font-family: var(--font-data);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  color: var(--arc);
+  margin-bottom: 1.25rem;
+}
+
+.hero__tagline {
+  margin-top: 1.75rem;
+  max-width: 36ch;
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  color: var(--text-on-ink-muted);
+}
+
+.hero__portrait {
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--ink-soft);
+  border: 1px solid var(--rule-on-ink);
+}
+
+.hero__portrait img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 940 / 1260;
+  object-fit: cover;
+  filter: grayscale(6%) contrast(1.03);
+}
+
+.hero__portrait figcaption {
+  font-size: 0.78rem;
+  color: var(--text-on-ink-muted);
+  padding: 0.7rem 0.9rem;
+  line-height: 1.5;
+}
+
+.hero__portrait figcaption span {
+  opacity: 0.7;
+}
+
+.hero__scroll-cue {
+  position: absolute;
+  bottom: clamp(1.25rem, 3vw, 2rem);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 46px;
+  background: var(--rule-on-ink);
+  overflow: hidden;
+}
+
+.hero__scroll-cue span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--arc);
+  transform: translateY(-100%);
+  animation: cueDrop 2.6s ease-in-out infinite;
+}
+
+@keyframes cueDrop {
+  0% { transform: translateY(-100%); }
+  60% { transform: translateY(100%); }
+  100% { transform: translateY(100%); }
+}
+
+/* Staggered hero entrance — a single orchestrated moment on load */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: heroReveal 0.7s ease forwards;
+}
+[data-reveal="1"] { animation-delay: 0.05s; }
+[data-reveal="2"] { animation-delay: 0.15s; }
+[data-reveal="3"] { animation-delay: 0.32s; }
+[data-reveal="4"] { animation-delay: 0.45s; }
+
+@keyframes heroReveal {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ================================================================
+   7. INTRODUCTION
+================================================================ */
+.intro {
+  background: var(--paper);
+  padding-top: clamp(4rem, 10vw, 7rem);
+  padding-bottom: clamp(2rem, 6vw, 4rem);
+}
+
+.intro__text {
+  max-width: 48ch;
+  margin: 0 auto;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.3rem, 2.6vw, 1.7rem);
+  line-height: 1.45;
+  text-align: center;
+  color: var(--text-on-paper);
+}
+
+/* ================================================================
+   8. BIOGRAPHY
+================================================================ */
+.bio {
+  background: var(--paper);
+  padding-top: clamp(2rem, 6vw, 3rem);
+}
+
+.bio__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3rem, 7vw, 5rem);
+}
+
+.bio__block {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  border-top: 1px solid var(--rule-on-paper);
+  padding-top: clamp(2rem, 4vw, 2.75rem);
+}
+
+.bio__label {
+  font-family: var(--font-data);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--text-on-paper-muted);
+  align-self: start;
+  padding-top: 0.4rem;
+}
+
+.bio__content {
+  min-width: 0;
+}
+
+.bio__copy {
+  max-width: var(--measure);
+}
+
+.bio__copy p + p {
+  margin-top: 1.1rem;
+}
+
+.bio__copy p {
+  color: var(--text-on-paper);
+  font-size: 1.02rem;
+}
+
+/* ================================================================
+   9. ACHIEVEMENTS
+================================================================ */
+.achievements {
+  background: var(--paper-deep);
+}
+
+.achievements__inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.achievements__item {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: clamp(1rem, 3vw, 2rem);
+  padding: 1.75rem 0;
+  border-top: 1px solid var(--rule-on-paper);
+  align-items: baseline;
+}
+
+.achievements__item:last-child {
+  border-bottom: 1px solid var(--rule-on-paper);
+}
+
+.achievements__index {
+  font-family: var(--font-data);
+  font-size: 1.1rem;
+  color: var(--text-on-paper-muted);
+}
+
+.achievements__item h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin-bottom: 0.4rem;
+}
+
+.achievements__item p {
+  color: var(--text-on-paper-muted);
+  max-width: 52ch;
+  font-size: 0.98rem;
+}
+
+/* ================================================================
+   10. TIMELINE
+================================================================ */
+.timeline {
+  background: var(--ink);
+}
+
+.timeline__inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.timeline__item {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  padding: 1.6rem 0;
+  border-top: 1px solid var(--rule-on-ink);
+}
+
+.timeline__item:last-child {
+  border-bottom: 1px solid var(--rule-on-ink);
+}
+
+.timeline__year {
+  font-family: var(--font-data);
+  font-size: 1.1rem;
+  color: var(--arc);
+  align-self: start;
+  padding-top: 0.15rem;
+}
+
+.timeline__event h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--text-on-ink);
+  margin-bottom: 0.35rem;
+}
+
+.timeline__event p {
+  color: var(--text-on-ink-muted);
+  max-width: 54ch;
+  font-size: 0.98rem;
+}
+
+/* ================================================================
+   11. QUOTE
+================================================================ */
+.quote {
+  background: var(--ink);
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  padding-top: clamp(3rem, 8vw, 6rem);
+  padding-bottom: clamp(3rem, 8vw, 6rem);
+}
+
+.quote__block p {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.5rem, 3.6vw, 2.4rem);
+  line-height: 1.35;
+  color: var(--arc);
+  max-width: 26ch;
+  margin: 0 auto;
+}
+
+.quote__block cite {
+  display: block;
+  margin-top: 1.75rem;
+  font-style: normal;
+  font-size: 0.95rem;
+  color: var(--text-on-ink-muted);
+}
+
+/* ================================================================
+   12. LEGACY
+================================================================ */
+.legacy {
+  background: var(--paper);
+}
+
+.legacy__inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.legacy__copy {
+  max-width: var(--measure);
+}
+
+.legacy__copy p + p {
+  margin-top: 1.1rem;
+}
+
+.legacy__copy p {
+  font-size: 1.02rem;
+}
+
+/* ================================================================
+   13. CLOSING & FOOTER
+================================================================ */
+.closing {
+  background: var(--ink);
+  text-align: center;
+  padding-top: clamp(4rem, 10vw, 7rem);
+  padding-bottom: clamp(4rem, 10vw, 7rem);
+}
+
+.closing__text {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  color: var(--text-on-ink);
+  line-height: 1.5;
+}
+
+.site-footer {
+  background: var(--ink);
+  border-top: 1px solid var(--rule-on-ink);
+  padding: 2.5rem clamp(1.5rem, 6vw, 4rem) 3rem;
+}
+
+.site-footer__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.site-footer__name {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--text-on-ink);
+}
+
+.site-footer__name span {
+  color: var(--text-on-ink-muted);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+}
+
+.site-footer__note,
+.site-footer__credits {
+  margin-top: 0.6rem;
+  font-size: 0.82rem;
+  color: var(--text-on-ink-muted);
+  max-width: 70ch;
+}
+
+/* ================================================================
+   14. SCROLL REVEAL (progressive enhancement)
+   Hidden-by-default state only applies once JavaScript has
+   confirmed (via the classList.add('js') in <head>) that it can
+   reveal these elements again. Without JavaScript, .reveal content
+   is simply visible from the start — nothing depends on the script.
+================================================================ */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ================================================================
+   15. FOCUS STATES
+================================================================ */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--arc);
+  outline-offset: 3px;
+}
+
+/* ================================================================
+   16. RESPONSIVE
+================================================================ */
+@media (max-width: 900px) {
+  .hero__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero__portrait {
+    order: -1;
+    max-width: 340px;
+  }
+
+  .bio__block,
+  .achievements__item,
+  .timeline__item {
+    grid-template-columns: 1fr;
+  }
+
+  .bio__label {
+    padding-top: 0;
+  }
+
+  .achievements__index,
+  .timeline__year {
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .site-nav__links {
+    gap: 1rem;
+  }
+  .site-nav__links a {
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .site-nav__mark {
+    display: none;
+  }
+}
+
+/* ================================================================
+   17. REDUCED MOTION
+================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  [data-reveal] {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .hero__scroll-cue span {
+    animation: none;
+  }
+}

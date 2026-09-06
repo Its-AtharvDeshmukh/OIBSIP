@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova | Premium Authentication</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" aria-live="polite"></div>
+
+    <!-- AUTHENTICATION VIEW -->
+    <main id="auth-view" class="view-container">
+        <div class="auth-layout">
+            
+            <!-- LEFT PANEL: Premium Visual Storytelling -->
+            <div class="brand-panel">
+                <div class="ambient-glow"></div>
+                <div class="grid-overlay"></div>
+                
+                <div class="brand-header">
+                    <div class="brand-logo">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                        <span>Nova</span>
+                    </div>
+                </div>
+
+                <div class="brand-visual">
+                    <div class="glass-testimonial">
+                        <div class="quote-icon">"</div>
+                        <blockquote>Nova has completely transformed how our team manages authentication. It is simple, fast, and remarkably secure from day one.</blockquote>
+                        <div class="author-block">
+                            <div class="author-avatar">SJ</div>
+                            <div class="author-info">
+                                <strong>Sarah Jenkins</strong>
+                                <span>CTO at ApexTech</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: Authentication Forms -->
+            <div class="form-panel">
+                <div class="form-wrapper">
+                    
+                    <!-- Login Form -->
+                    <div id="login-container" class="fade-enter active">
+                        <div class="form-header">
+                            <h1>Welcome back</h1>
+                            <p>Enter your credentials to access your account.</p>
+                        </div>
+
+                        <form id="login-form" novalidate>
+                            <div class="input-group">
+                                <label for="login-email">Email</label>
+                                <input type="email" id="login-email" placeholder="name@company.com" required autocomplete="email">
+                                <span class="error-msg" id="login-email-error"></span>
+                            </div>
+
+                            <div class="input-group">
+                                <div class="label-row">
+                                    <label for="login-password">Password</label>
+                                    <a href="#" class="forgot-link" tabindex="-1">Forgot password?</a>
+                                </div>
+                                <div class="password-wrapper">
+                                    <input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password">
+                                    <button type="button" class="toggle-password" aria-label="Toggle password visibility">
+                                        <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                    </button>
+                                </div>
+                                <span class="error-msg" id="login-password-error"></span>
+                            </div>
+
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="remember-me">
+                                <label for="remember-me">Remember me for 30 days</label>
+                            </div>
+
+                            <button type="submit" class="btn-primary" id="login-btn">
+                                <span class="btn-text">Sign In</span>
+                                <span class="loader hidden"></span>
+                            </button>
+                        </form>
+
+                        <div class="form-footer">
+                            <p>Don't have an account? <button type="button" id="go-to-register" class="text-btn">Create one</button></p>
+                        </div>
+                    </div>
+
+                    <!-- Registration Form -->
+                    <div id="register-container" class="fade-enter hidden">
+                        <div class="form-header">
+                            <h1>Create an account</h1>
+                            <p>Join Nova and get started in seconds.</p>
+                        </div>
+
+                        <form id="register-form" novalidate>
+                            <div class="input-group">
+                                <label for="reg-name">Full name</label>
+                                <input type="text" id="reg-name" placeholder="John Doe" required autocomplete="name">
+                                <span class="error-msg" id="reg-name-error"></span>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="reg-email">Email</label>
+                                <input type="email" id="reg-email" placeholder="name@company.com" required autocomplete="email">
+                                <span class="error-msg" id="reg-email-error"></span>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="reg-password">Password</label>
+                                <div class="password-wrapper">
+                                    <input type="password" id="reg-password" placeholder="••••••••" required autocomplete="new-password">
+                                    <button type="button" class="toggle-password" aria-label="Toggle password visibility">
+                                        <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                    </button>
+                                </div>
+                                
+                                <!-- Live Password Strength Indicator -->
+                                <div class="password-strength">
+                                    <div class="strength-bars">
+                                        <div class="bar" id="bar-1"></div>
+                                        <div class="bar" id="bar-2"></div>
+                                        <div class="bar" id="bar-3"></div>
+                                    </div>
+                                    <ul class="strength-reqs">
+                                        <li id="req-length" class="invalid">At least 8 characters</li>
+                                        <li id="req-upper" class="invalid">One uppercase letter</li>
+                                        <li id="req-number" class="invalid">One number</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="reg-confirm">Confirm password</label>
+                                <div class="password-wrapper">
+                                    <input type="password" id="reg-confirm" placeholder="••••••••" required autocomplete="new-password">
+                                </div>
+                                <span class="error-msg" id="reg-confirm-error"></span>
+                            </div>
+
+                            <button type="submit" class="btn-primary" id="register-btn">
+                                <span class="btn-text">Create Account</span>
+                                <span class="loader hidden"></span>
+                            </button>
+                        </form>
+
+                        <div class="form-footer">
+                            <p>Already have an account? <button type="button" id="go-to-login" class="text-btn">Sign in</button></p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- PROTECTED DASHBOARD VIEW -->
+    <main id="dashboard-view" class="view-container hidden">
+        <header class="dash-header">
+            <div class="dash-logo">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                <span>Nova Dashboard</span>
+            </div>
+            <button id="logout-btn" class="btn-secondary">Log Out</button>
+        </header>
+
+        <div class="dash-content">
+            <div class="welcome-banner">
+                <h1 id="dash-greeting">Welcome back.</h1>
+                <p>You have successfully authenticated into the secure environment.</p>
+            </div>
+
+            <div class="dash-grid">
+                <div class="dash-card profile-card">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </div>
+                    <div class="card-info">
+                        <h3>Account Details</h3>
+                        <div class="info-row">
+                            <span>Name</span>
+                            <strong id="dash-name">--</strong>
+                        </div>
+                        <div class="info-row">
+                            <span>Email</span>
+                            <strong id="dash-email">--</strong>
+                        </div>
+                        <div class="info-row">
+                            <span>Status</span>
+                            <strong class="status-active">Authenticated</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dash-card info-card">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    </div>
+                    <div class="card-info">
+                        <h3>Security Framework</h3>
+                        <p>Your session is managed locally. Passwords are securely hashed before storage to prevent plaintext exposure.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
