@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import Admin from '../models/Admin.js';
 
-// Guard for normal authenticated users
 export const protectUser = async (req, res, next) => {
   let token;
 
@@ -29,7 +28,6 @@ export const protectUser = async (req, res, next) => {
   }
 };
 
-// Guard for Admin users
 export const protectAdmin = async (req, res, next) => {
   let token;
 
@@ -43,7 +41,7 @@ export const protectAdmin = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
+
     if (decoded.role !== 'admin') {
       return res.status(403).json({ success: false, message: 'Access denied: Admin credentials required.' });
     }

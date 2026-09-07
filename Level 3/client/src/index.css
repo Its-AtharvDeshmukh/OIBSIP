@@ -1,0 +1,527 @@
+/* ==========================================================================
+   PIZZA CRAFT DESIGN SYSTEM
+   Phase 1: Global Visual Foundation
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap');
+
+:root {
+  /* --- 1. COLOR TOKENS --- */
+  /* Brand */
+  --primary: #DA291C;         /* Fire-roasted Tomato */
+  --primary-hover: #B71C1C;   /* Deepened for interaction */
+  --primary-active: #9A0007;  /* Tactile press state */
+  --primary-soft: #FFEBEE;    /* Soft tint for backgrounds/badges */
+  
+  --secondary: #1F2937;       /* Charcoal Accent */
+  --secondary-light: #374151; 
+  
+  /* Surfaces & Backgrounds */
+  --bg-main: #FDFBF7;         /* Warm Dough */
+  --bg-secondary: #F3F4F6;    /* Light Gray for contrast zones */
+  --surface: #FFFFFF;         /* Pure white for elevated cards */
+  --surface-elevated: #FFFFFF;
+  
+  /* Text */
+  --text-main: #111827;       /* Near Black for high contrast */
+  --text-secondary: #4B5563;  /* Medium Gray for body */
+  --text-muted: #9CA3AF;      /* Light Gray for placeholders/captions */
+  --text-inverse: #FFFFFF;    /* White text on primary buttons */
+  
+  /* Semantic (WCAG AA Compliant) */
+  --success: #059669;
+  --success-soft: #D1FAE5;
+  --warning: #D97706;
+  --warning-soft: #FEF3C7;
+  --danger: #DC2626;
+  --danger-soft: #FEE2E2;
+  --info: #2563EB;
+  --info-soft: #DBEAFE;
+  
+  /* Borders */
+  --border-light: #E5E7EB;
+  --border: #D1D5DB;
+  --border-strong: #9CA3AF;
+
+  /* --- 2. TYPOGRAPHY TOKENS --- */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Playfair Display', serif;
+
+  /* --- 3. BORDER RADIUS TOKENS --- */
+  --radius-xs: 2px;
+  --radius-sm: 4px;      /* Checkboxes, small tags */
+  --radius-md: 8px;      /* Inputs, Buttons */
+  --radius-lg: 12px;     /* Cards, Modals */
+  --radius-xl: 20px;     /* Hero Elements */
+  --radius-pill: 9999px; /* Badges */
+
+  /* --- 4. SHADOW & ELEVATION TOKENS --- */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); /* Hover states */
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03); /* Modals/Dropdowns */
+  --shadow-focus: 0 0 0 3px rgba(218, 41, 28, 0.2); /* Primary focus ring */
+
+  /* --- 5. SPACING TOKENS --- */
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-64: 64px;
+  --space-80: 80px;
+
+  /* --- 6. Z-INDEX TOKENS --- */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+
+  /* --- 7. MOTION TOKENS --- */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-emphasized: cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy entrance */
+  
+  --transition-fast: 150ms var(--ease-standard);     /* Hovers, colors */
+  --transition-normal: 250ms var(--ease-standard);   /* Layout shifts, elevation */
+  --transition-slow: 400ms var(--ease-emphasized);   /* Modals, toasts */
+}
+
+/* ==========================================================================
+   GLOBAL RESET
+   ========================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+img, picture, svg, video {
+  display: block;
+  max-width: 100%;
+}
+
+/* ==========================================================================
+   ACCESSIBILITY
+   ========================================================================== */
+
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   TYPOGRAPHY
+   ========================================================================== */
+
+h1, h2, h3, h4, .font-display {
+  color: var(--text-main);
+}
+
+/* Serif for high-level hierarchy */
+.text-display { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; line-height: 1.1; }
+.text-h1 { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; }
+.text-h2 { font-family: var(--font-serif); font-size: clamp(1.5rem, 3vw, 2.25rem); font-weight: 700; line-height: 1.3; }
+
+/* Sans-serif for UI clarity */
+.text-h3 { font-family: var(--font-sans); font-size: 1.5rem; font-weight: 600; line-height: 1.4; }
+.text-h4 { font-family: var(--font-sans); font-size: 1.25rem; font-weight: 600; line-height: 1.4; }
+
+.text-body-lg { font-size: 1.125rem; }
+.text-body { font-size: 1rem; }
+.text-body-sm { font-size: 0.875rem; color: var(--text-secondary); }
+.text-caption { font-size: 0.75rem; color: var(--text-muted); }
+
+/* Tabular numerals prevent jumping widths when prices change */
+.text-price { font-size: 1.25rem; font-weight: 700; color: var(--text-main); font-variant-numeric: tabular-nums; }
+
+/* ==========================================================================
+   CONTAINERS & LAYOUT
+   ========================================================================== */
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-16);
+}
+
+@media (min-width: 768px) {
+  .container { padding: 0 var(--space-32); }
+}
+
+@media (min-width: 1024px) {
+  .container { padding: 0 var(--space-48); }
+}
+
+/* ==========================================================================
+   COMPONENT: BUTTONS
+   ========================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-24);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast), 
+              color var(--transition-fast), 
+              transform var(--transition-fast), 
+              box-shadow var(--transition-fast);
+}
+
+.btn-sm { padding: var(--space-8) var(--space-16); font-size: 0.875rem; }
+.btn-block { width: 100%; }
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--text-inverse);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:active:not(:disabled) {
+  background: var(--primary-active);
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: var(--secondary);
+  color: var(--text-inverse);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--secondary-light);
+}
+
+.btn-outline {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-main);
+}
+
+.btn-outline:hover:not(:disabled) {
+  border-color: var(--secondary);
+  background: var(--bg-secondary);
+}
+
+/* ==========================================================================
+   COMPONENT: CARDS
+   ========================================================================== */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-24);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-fast);
+}
+
+/* ==========================================================================
+   COMPONENT: FORMS
+   ========================================================================== */
+
+.form-group {
+  margin-bottom: var(--space-20);
+  text-align: left;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: var(--space-8);
+  color: var(--text-main);
+}
+
+.form-input {
+  width: 100%;
+  padding: var(--space-12) var(--space-16);
+  font-family: var(--font-sans);
+  font-size: 1rem; /* 16px prevents iOS zoom on focus */
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-main);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-input::placeholder { color: var(--text-muted); }
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: var(--shadow-focus);
+}
+
+.form-input:disabled {
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   COMPONENT: BADGES & ALERTS
+   ========================================================================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-primary { background: var(--primary-soft); color: var(--primary); }
+.badge-success { background: var(--success-soft); color: var(--success); }
+.badge-warning { background: var(--warning-soft); color: var(--warning); }
+.badge-danger  { background: var(--danger-soft); color: var(--danger); }
+
+.alert {
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  margin-bottom: var(--space-20);
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-weight: 500;
+}
+
+.alert-danger { background: var(--danger-soft); color: var(--danger); border: 1px solid rgba(220, 38, 38, 0.2); }
+.alert-success { background: var(--success-soft); color: var(--success); border: 1px solid rgba(5, 150, 105, 0.2); }
+
+
+
+/* ==========================================================================
+   PIZZA CRAFT DESIGN SYSTEM
+   Phase 14: Responsive & Mobile UX Safeguards
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  /* Prevent horizontal overflow on mobile viewports */
+  body, html {
+    overflow-x: hidden;
+  }
+
+  /* Adjust typography scale on small mobile screens */
+  .text-display {
+    font-size: 2.25rem !important;
+  }
+  .text-h1 {
+    font-size: 1.85rem !important;
+  }
+  .text-h2 {
+    font-size: 1.5rem !important;
+  }
+
+  /* Ensure containers have safe touch padding */
+  .container {
+    padding-left: var(--space-16) !important;
+    padding-right: var(--space-16) !important;
+  }
+
+  /* Force touch targets to meet 44px minimum recommendation */
+  button, .btn, input, select, textarea {
+    min-height: 44px;
+  }
+  
+  /* Optimize card spacing on mobile */
+  .card {
+    padding: var(--space-16) !important;
+  }
+}
+
+
+
+
+/* ==========================================================================
+   PIZZA CRAFT DESIGN SYSTEM
+   Builder Additions & Phase Updates
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap');
+
+:root {
+  --primary: #DA291C;
+  --primary-hover: #B71C1C;
+  --primary-active: #9A0007;
+  --primary-soft: #FFEBEE;
+  --secondary: #1F2937;
+  --secondary-light: #374151;
+  --bg-main: #FDFBF7;
+  --bg-secondary: #F3F4F6;
+  --surface: #FFFFFF;
+  --text-main: #111827;
+  --text-secondary: #4B5563;
+  --text-muted: #9CA3AF;
+  --text-inverse: #FFFFFF;
+  --success: #059669;
+  --success-soft: #D1FAE5;
+  --danger: #DC2626;
+  --danger-soft: #FEE2E2;
+  --border-light: #E5E7EB;
+  --border: #D1D5DB;
+  --border-strong: #9CA3AF;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Playfair Display', serif;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 20px;
+  --radius-pill: 9999px;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+  --shadow-focus: 0 0 0 3px rgba(218, 41, 28, 0.2);
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 150ms var(--ease-standard);
+  --transition-normal: 250ms var(--ease-standard);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+img { display: block; max-width: 100%; }
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.text-h1 { font-family: var(--font-serif); font-size: clamp(2rem, 3.5vw, 2.75rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; color: var(--text-main); }
+.text-h2 { font-family: var(--font-serif); font-size: 1.75rem; font-weight: 700; line-height: 1.3; color: var(--text-main); }
+.text-h3 { font-family: var(--font-sans); font-size: 1.25rem; font-weight: 600; }
+.text-body { font-size: 1rem; }
+.text-body-sm { font-size: 0.875rem; color: var(--text-secondary); }
+.text-caption { font-size: 0.75rem; color: var(--text-muted); }
+.text-price { font-size: 1.25rem; font-weight: 700; color: var(--text-main); font-variant-numeric: tabular-nums; }
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-16, 16px);
+}
+
+@media (min-width: 768px) {
+  .container { padding: 0 32px; }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+.btn-sm { padding: 8px 16px; font-size: 0.875rem; }
+.btn-block { width: 100%; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+.btn-primary { background: var(--primary); color: var(--text-inverse); box-shadow: var(--shadow-sm); }
+.btn-primary:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-outline { border: 1px solid var(--border); background: var(--surface); color: var(--text-main); }
+.btn-outline:hover:not(:disabled) { border-color: var(--secondary); background: var(--bg-secondary); }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}

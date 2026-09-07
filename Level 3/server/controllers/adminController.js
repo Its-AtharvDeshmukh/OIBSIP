@@ -9,8 +9,6 @@ const generateAdminToken = (id) => {
   });
 };
 
-// @desc   Admin login
-// @route  POST /api/admin/login
 export const loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -43,8 +41,6 @@ export const loginAdmin = async (req, res) => {
   }
 };
 
-// @desc   Get all customer orders
-// @route  GET /api/admin/orders
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
@@ -57,8 +53,6 @@ export const getAllOrders = async (req, res) => {
   }
 };
 
-// @desc   Update order status & broadcast change in real time via Socket.io
-// @route  PATCH /api/admin/orders/:id/status
 export const updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -79,17 +73,14 @@ export const updateOrderStatus = async (req, res) => {
     order.orderStatus = status;
     await order.save();
 
-    // Broadcast real-time update via Socket.io
     const io = req.app.get('io');
     if (io) {
-      // Emit to room dedicated to this order
       io.to(`order_${order._id}`).emit('orderStatusUpdated', {
         orderId: order._id,
         orderStatus: order.orderStatus,
         updatedAt: order.updatedAt
       });
 
-      // Also broadcast globally for admin dashboard live charts
       io.emit('adminOrderUpdated', {
         orderId: order._id,
         orderStatus: order.orderStatus
@@ -106,8 +97,6 @@ export const updateOrderStatus = async (req, res) => {
   }
 };
 
-// @desc   Get all inventory items with calculated stock health
-// @route  GET /api/admin/inventory
 export const getAdminInventory = async (req, res) => {
   try {
     const items = await InventoryItem.find().sort({ category: 1, name: 1 });
@@ -117,8 +106,6 @@ export const getAdminInventory = async (req, res) => {
   }
 };
 
-// @desc   Manually update stock level or threshold for an inventory item
-// @route  PUT /api/admin/inventory/:id
 export const updateInventoryStock = async (req, res) => {
   try {
     const { stock, threshold, price } = req.body;
@@ -143,7 +130,6 @@ export const updateInventoryStock = async (req, res) => {
       item.price = Number(price);
     }
 
-    // Reset email notification timestamp if stock is replenished above threshold
     if (item.stock > item.threshold) {
       item.lastEmailNotifiedAt = null;
     }

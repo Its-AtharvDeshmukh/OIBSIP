@@ -2,7 +2,6 @@ import cron from 'node-cron';
 import InventoryItem from '../models/InventoryItem.js';
 import { sendLowStockAlertEmail } from '../services/emailService.js';
 
-// Cooldown period: Prevent spamming emails for the same item within 4 hours
 const NOTIFICATION_COOLDOWN_HOURS = 4;
 
 export const checkLowStock = async () => {
@@ -10,7 +9,6 @@ export const checkLowStock = async () => {
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@pizza.com';
     const cooldownDate = new Date(Date.now() - NOTIFICATION_COOLDOWN_HOURS * 60 * 60 * 1000);
 
-    // Query items where current stock <= threshold AND notification has not been sent recently
     const lowStockItems = await InventoryItem.find({
       $expr: { $lte: ['$stock', '$threshold'] },
       $or: [
@@ -25,10 +23,8 @@ export const checkLowStock = async () => {
 
     console.log(`[CRON STOCK MONITOR]: Found ${lowStockItems.length} items below threshold. Dispatching alert email...`);
 
-    // Dispatch email
     await sendLowStockAlertEmail(adminEmail, lowStockItems);
 
-    // Update timestamp to enforce anti-spam cooldown
     const now = new Date();
     await InventoryItem.updateMany(
       { _id: { $in: lowStockItems.map((i) => i._id) } },
@@ -42,9 +38,7 @@ export const checkLowStock = async () => {
   }
 };
 
-// Initializes the cron job (runs every 30 minutes)
 export const initStockCronJob = () => {
-  // Pattern: '*/30 * * * *' (Every 30 minutes)
   cron.schedule('*/30 * * * *', async () => {
     console.log('[CRON]: Running scheduled inventory stock verification...');
     await checkLowStock();

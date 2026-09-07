@@ -6,7 +6,6 @@ import { Server } from 'socket.io';
 import connectDB from './config/db.js';
 import { initStockCronJob } from './jobs/stockMonitor.js';
 
-// Route imports
 import authRoutes from './routes/authRoutes.js';
 import pizzaRoutes from './routes/pizzaRoutes.js';
 import inventoryRoutes from './routes/inventoryRoutes.js';
@@ -21,7 +20,6 @@ connectDB();
 const app = express();
 const server = http.createServer(app);
 
-// Setup Socket.io
 const io = new Server(server, {
   cors: {
     origin: process.env.CLIENT_URL || 'http://localhost:5173',
@@ -30,10 +28,8 @@ const io = new Server(server, {
   }
 });
 
-// Attach io to Express app for use in controllers
 app.set('io', io);
 
-// Socket.io Connection Logic
 io.on('connection', (socket) => {
   socket.on('joinOrderRoom', (orderId) => {
     socket.join(`order_${orderId}`);
@@ -45,7 +41,6 @@ io.on('connection', (socket) => {
   });
 });
 
-// Middleware
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:5173',
   credentials: true
@@ -53,7 +48,6 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Route Mounts
 app.use('/api/auth', authRoutes);
 app.use('/api/pizzas', pizzaRoutes);
 app.use('/api/inventory', inventoryRoutes);
@@ -61,7 +55,6 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Base health check route
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'success',
@@ -69,7 +62,6 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Initialize Background Scheduled Jobs
 initStockCronJob();
 
 const PORT = process.env.PORT || 5001;

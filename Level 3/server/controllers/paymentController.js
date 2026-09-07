@@ -3,8 +3,6 @@ import razorpayInstance from '../config/razorpay.js';
 import Order from '../models/Order.js';
 import InventoryItem from '../models/InventoryItem.js';
 
-// @desc   Validate ingredients, calculate price, create pending Order & Razorpay Order
-// @route  POST /api/payment/create-order
 export const createRazorpayOrder = async (req, res) => {
   try {
     const { pizzaConfig, customerInfo } = req.body;
@@ -18,7 +16,6 @@ export const createRazorpayOrder = async (req, res) => {
 
     const { base, sauce, cheese, veggies = [] } = pizzaConfig;
 
-    // 1. Fetch ingredients from DB to ensure they exist and have available stock
     const requiredNames = [base, sauce, cheese, ...veggies];
     const items = await InventoryItem.find({ name: { $in: requiredNames } });
 
@@ -29,7 +26,6 @@ export const createRazorpayOrder = async (req, res) => {
       });
     }
 
-    // 2. Verify stock availability (must be > 0)
     for (const item of items) {
       if (item.stock <= 0) {
         return res.status(400).json({
@@ -39,10 +35,8 @@ export const createRazorpayOrder = async (req, res) => {
       }
     }
 
-    // 3. Compute authentic server-side total amount in INR
     const totalAmount = items.reduce((acc, curr) => acc + curr.price, 0);
 
-    // 4. Create Razorpay Test Order (amount in paise: 1 INR = 100 paise)
     const options = {
       amount: Math.round(totalAmount * 100),
       currency: 'INR',
@@ -53,13 +47,15 @@ export const createRazorpayOrder = async (req, res) => {
     try {
       razorpayOrder = await razorpayInstance.orders.create(options);
     } catch (rzpErr) {
+      console.error("--- RAZORPAY API ERROR ---", rzpErr);
+      // Safely extract Razorpay's nested error description
+      const errorMessage = rzpErr?.error?.description || rzpErr?.message || 'Unknown API Error';
       return res.status(500).json({
         success: false,
-        message: `Razorpay Order Creation Failed: ${rzpErr.message}. Ensure your test keys are valid in server/.env.`
+        message: `Razorpay Error: ${errorMessage}`
       });
     }
 
-    // 5. Create pending Order record in MongoDB
     const order = await Order.create({
       user: req.user._id,
       customerInfo: customerInfo || {
@@ -96,8 +92,6 @@ export const createRazorpayOrder = async (req, res) => {
   }
 };
 
-// @desc   Verify Razorpay payment signature & atomically decrement inventory
-// @route  POST /api/payment/verify
 export const verifyRazorpayPayment = async (req, res) => {
   try {
     const {
@@ -114,7 +108,6 @@ export const verifyRazorpayPayment = async (req, res) => {
       });
     }
 
-    // 1. Cryptographic HMAC SHA256 verification
     const bodyData = `${razorpay_order_id}|${razorpay_payment_id}`;
     const expectedSignature = crypto
       .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
@@ -131,37 +124,31 @@ export const verifyRazorpayPayment = async (req, res) => {
       await order.save();
       return res.status(400).json({
         success: false,
-        message: 'Security Alert: Payment signature verification failed. Untrusted response.'
+        message: 'Security Alert: Payment signature verification failed.'
       });
     }
 
-    // 2. Mark order as confirmed and completed
     order.paymentStatus = 'Completed';
     order.orderStatus = 'Order Received';
     order.paymentDetails.razorpayPaymentId = razorpay_payment_id;
     order.paymentDetails.razorpaySignature = razorpay_signature;
     await order.save();
 
-    // 3. ATOMIC BACKEND INVENTORY DEDUCTION
-    // Decrement selected base stock
     await InventoryItem.updateOne(
       { name: order.pizzaConfig.base, category: 'base' },
       { $inc: { stock: -1 } }
     );
 
-    // Decrement selected sauce stock
     await InventoryItem.updateOne(
       { name: order.pizzaConfig.sauce, category: 'sauce' },
       { $inc: { stock: -1 } }
     );
 
-    // Decrement selected cheese stock
     await InventoryItem.updateOne(
       { name: order.pizzaConfig.cheese, category: 'cheese' },
       { $inc: { stock: -1 } }
     );
 
-    // Decrement each selected vegetable stock
     if (order.pizzaConfig.veggies && order.pizzaConfig.veggies.length > 0) {
       for (const veggie of order.pizzaConfig.veggies) {
         await InventoryItem.updateOne(
