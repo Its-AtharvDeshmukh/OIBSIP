@@ -12,7 +12,7 @@ import inventoryRoutes from './routes/inventoryRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
-import adminMenuRoutes from './routes/adminMenuRoutes.js'; // <-- Missing import added here
+import adminMenuRoutes from './routes/adminMenuRoutes.js';
 
 dotenv.config();
 
@@ -21,10 +21,18 @@ connectDB();
 const app = express();
 const server = http.createServer(app);
 
+// Dynamic CORS configuration supporting Localhost, Vercel, and Netlify
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.CLIENT_URL,
+  /\.vercel\.app$/,
+  /\.netlify\.app$/
+].filter(Boolean);
+
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
-    methods: ['GET', 'POST', 'PATCH', 'PUT'],
+    origin: allowedOrigins,
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
     credentials: true
   }
 });
@@ -43,12 +51,14 @@ io.on('connection', (socket) => {
 });
 
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: allowedOrigins,
   credentials: true
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/pizzas', pizzaRoutes);
 app.use('/api/inventory', inventoryRoutes);
@@ -56,6 +66,15 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/admin/menu', adminMenuRoutes);
+
+// Root & Health Check Routes (Must be defined BEFORE server.listen)
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: '🍕 Pizza Craft Backend API is live and running successfully!',
+    timestamp: new Date().toISOString()
+  });
+});
 
 app.get('/api/health', (req, res) => {
   res.status(200).json({
@@ -69,5 +88,5 @@ initStockCronJob();
 const PORT = process.env.PORT || 5001;
 
 server.listen(PORT, () => {
-  console.log(`Server running in development mode on port ${PORT}`);
+  console.log(`Server running in production mode on port ${PORT}`);
 });

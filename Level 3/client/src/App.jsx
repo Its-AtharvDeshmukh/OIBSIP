@@ -30,6 +30,14 @@ import AdminOrders from './pages/admin/AdminOrders';
 import AdminMenuManager from './pages/admin/AdminMenuManager';
 import AdminStudents from './pages/admin/AdminStudents';
 
+import { io } from 'socket.io-client';
+
+const SOCKET_URL = import.meta.env.VITE_API_URL 
+  ? import.meta.env.VITE_API_URL.replace('/api', '') 
+  : 'http://localhost:5001';
+
+const socket = io(SOCKET_URL);
+
 const Placeholder = ({ title }) => (
   <div className="container" style={{ padding: 'var(--space-64) 0', textAlign: 'center' }}>
     <h1 className="text-h2 text-muted">{title}</h1>
