@@ -12,6 +12,7 @@ import inventoryRoutes from './routes/inventoryRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import adminMenuRoutes from './routes/adminMenuRoutes.js'; // <-- Missing import added here
 
 dotenv.config();
 
@@ -54,6 +55,7 @@ app.use('/api/inventory', inventoryRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/admin/menu', adminMenuRoutes);
 
 app.get('/api/health', (req, res) => {
   res.status(200).json({

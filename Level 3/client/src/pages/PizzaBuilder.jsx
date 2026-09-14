@@ -1,53 +1,61 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePizzaBuilder } from '../context/PizzaBuilderContext';
 
 // --- Premium Inline SVGs ---
 const CheckIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="20 6 9 17 4 12"></polyline>
   </svg>
 );
 
 const ChevronLeftIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="15 18 9 12 15 6"></polyline>
   </svg>
 );
 
-const LoaderIcon = () => (
-  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ animation: 'spin 1s linear infinite' }}>
-    <line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
+const ChevronRightIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+);
+
+const ReceiptIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+    <polyline points="14 2 14 8 20 8"></polyline>
+    <line x1="16" y1="13" x2="8" y2="13"></line>
+    <line x1="16" y1="17" x2="8" y2="17"></line>
+    <polyline points="10 9 9 9 8 9"></polyline>
   </svg>
 );
 
 // --- High-Quality Ingredient Imagery Mapping ---
-// Maps exact database names to premium food photography for a tactile experience
 const INGREDIENT_IMAGES = {
-  'Classic Hand Tossed': 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=600&auto=format&fit=crop&q=80',
-  'Thin Crust': 'https://images.unsplash.com/photo-1604068549290-dea0e4a30536?w=600&auto=format&fit=crop&q=80',
+  'Classic Hand Tossed': 'https://www.differencebetween.net/wp-content/uploads/2018/07/Differences-Between-Hand-Tossed-and-Pan-.jpg',
+  'Thin Crust': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSVZd_tmkVxICR_p7pfUFqjy9PltCH4bubcZ4KxtFYHswFsp3SZRPVjIw&s=10',
   'Cheese Burst Crust': 'https://images.unsplash.com/photo-1613564834361-9436948817d1?w=600&auto=format&fit=crop&q=80',
   'Whole Wheat Crust': 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&auto=format&fit=crop&q=80',
-  'Gluten-Free Herb Crust': 'https://images.unsplash.com/photo-1585238341295-885ebaa810d2?w=600&auto=format&fit=crop&q=80',
-  'Classic Marinara': 'https://images.unsplash.com/photo-1605634563968-3eab20420b9e?w=600&auto=format&fit=crop&q=80',
+  'Gluten-Free Herb Crust': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPxN6v_QhCVEaSRs0-VH2N1fz5bJ7AUwvm2m91xIv0dk6iywXBizIybH6Q&s=10',
+  'Classic Marinara': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUAqxTrD5FXi24MPUGkDj1BzGA9zhtBkjnNTQVC-cH1ouG1MRFyb0NOII&s=10',
   'Spicy Red Pepper': 'https://images.unsplash.com/photo-1596662951482-0c4ba74a6df6?w=600&auto=format&fit=crop&q=80',
   'Creamy Garlic Alfredo': 'https://images.unsplash.com/photo-1572453800999-e8d2d1589b7c?w=600&auto=format&fit=crop&q=80',
-  'Smoky Chipotle Barbeque': 'https://images.unsplash.com/photo-1615486171448-4fd1ab0f18bd?w=600&auto=format&fit=crop&q=80',
+  'Smoky Chipotle Barbeque': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0_cmBSQcw_TAlXbZ-3L-cZVAu__nJw1EXrq9lqx3Jr0BluBjb6iLSHnY&s=10',
   'Zesty Basil Pesto': 'https://images.unsplash.com/photo-1598866594230-a7c12756260f?w=600&auto=format&fit=crop&q=80',
-  'Fresh Mozzarella': 'https://images.unsplash.com/photo-1629517112028-d88e63ccfcb8?w=600&auto=format&fit=crop&q=80',
-  'Sharp Cheddar': 'https://images.unsplash.com/photo-1618164424360-6b610c14b609?w=600&auto=format&fit=crop&q=80',
+  'Fresh Mozzarella': 'https://cdn.cdkitchen.com/recipes/images/2018/11/7733-8455-mx.jpg',
+  'Sharp Cheddar': 'https://www.wisconsincheeseman.com/dw/image/v2/BBVM_PRD/on/demandware.static/-/Sites-colony-master-catalog/default/dw4dfa6fde/large/sub_42/013019_F22.png?sw=680&sh=680&sm=fit',
   'Gouda Blend': 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=600&auto=format&fit=crop&q=80',
-  'Plant-Based Vegan Cheese': 'https://images.unsplash.com/photo-1635035222044-8848d70669ce?w=600&auto=format&fit=crop&q=80',
+  'Plant-Based Vegan Cheese': 'https://minimalistbaker.com/wp-content/uploads/2016/02/EASY-Creamy-VEGAN-CHEESE-Infused-with-lemon-zest-garlic-and-dill.-So-creamy-savory-and-cheesy-vegan-plantbased-glutenfree-cheese-recipe.jpg',
   'Crisp Bell Peppers': 'https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?w=600&auto=format&fit=crop&q=80',
-  'Sliced Button Mushrooms': 'https://images.unsplash.com/photo-1611105637889-3e70ef6b1d28?w=600&auto=format&fit=crop&q=80',
+  'Sliced Button Mushrooms': 'https://www.thespruceeats.com/thmb/GXXTncZbc9Bfcw1zTlVHPnv31rE=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/buttonmushroomsTemmuzcan-beb0fc0c51df4ed7be0d7b49d093f46e.jpg',
   'Red Onions': 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=600&auto=format&fit=crop&q=80',
   'Spanish Black Olives': 'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?w=600&auto=format&fit=crop&q=80',
-  'Pickled Jalapeños': 'https://images.unsplash.com/photo-1625297126131-0df8cd84637e?w=600&auto=format&fit=crop&q=80',
-  'Golden Sweet Corn': 'https://images.unsplash.com/photo-1562916682-4bf190e23805?w=600&auto=format&fit=crop&q=80',
+  'Pickled Jalapeños': 'https://www.budgetbytes.com/wp-content/uploads/2023/09/Pickled-Jalapenos-V1.jpg',
+  'Golden Sweet Corn': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNirlcpXZid7sdpmkrjKqy4G9vh_QMgXbggPxx3wHg1Q&s=10',
   'Baby Spinach & Cherry Tomatoes': 'https://images.unsplash.com/photo-1596199050105-6d5d32222916?w=600&auto=format&fit=crop&q=80',
 };
 
-// Graceful fallbacks by category
 const DEFAULT_IMAGES = {
   base: 'https://images.unsplash.com/photo-1604152006508-5d4316d2f3db?w=600&auto=format&fit=crop&q=80',
   sauce: 'https://images.unsplash.com/photo-1552689486-f6773047d19f?w=600&auto=format&fit=crop&q=80',
@@ -55,17 +63,9 @@ const DEFAULT_IMAGES = {
   veggie: 'https://images.unsplash.com/photo-1566843972142-a7fcb70de55a?w=600&auto=format&fit=crop&q=80'
 };
 
-const SUMMARY_HERO_IMG = 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&auto=format&fit=crop&q=80';
-
-// --- Price Formatter ---
 const formatPrice = (amount) => {
   if (amount == null) return '';
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
+  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(amount);
 };
 
 const STEPS = [
@@ -77,6 +77,8 @@ const STEPS = [
 
 export default function PizzaBuilder() {
   const navigate = useNavigate();
+  const [animating, setAnimating] = useState(false);
+
   const {
     currentStep, setCurrentStep, ingredients, loading,
     selectedBase, setSelectedBase,
@@ -86,535 +88,538 @@ export default function PizzaBuilder() {
     totalPrice
   } = usePizzaBuilder();
 
-  // Scroll to top gently when steps change
+  // Smooth scroll and re-trigger entrance animations on step change
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    setAnimating(true);
+    const timer = setTimeout(() => setAnimating(false), 50);
+    return () => clearTimeout(timer);
   }, [currentStep]);
 
   const canGoNext = () => {
     if (currentStep === 1) return !!selectedBase;
     if (currentStep === 2) return !!selectedSauce;
     if (currentStep === 3) return !!selectedCheese;
-    return true; // Veggies (Step 4) are optional
+    return true; // Veggies are optional
   };
 
   const handleNext = () => {
-    if (currentStep < 4) {
-      setCurrentStep(prev => prev + 1);
-    } else {
-      navigate('/review'); // Preserve existing router flow
-    }
+    if (currentStep < 4) setCurrentStep(prev => prev + 1);
+    else navigate('/review'); 
   };
 
   const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(prev => prev - 1);
-    } else {
-      navigate('/');
-    }
+    if (currentStep > 1) setCurrentStep(prev => prev - 1);
+    else navigate('/');
   };
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-        <LoaderIcon />
-        <p className="text-body text-secondary" style={{ marginTop: 'var(--space-16)' }}>Opening the kitchen...</p>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', background: '#ffffff' }}>
+        <style>{`
+          .premium-spinner { width: 48px; height: 48px; border: 3px solid #f1f5f9; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s cubic-bezier(0.6, 0.2, 0.4, 0.8) infinite; }
+          @keyframes spin { to { transform: rotate(360deg); } }
+        `}</style>
+        <div className="premium-spinner"></div>
+        <p style={{ marginTop: '24px', fontWeight: '600', color: '#64748b', letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '0.85rem' }}>Preparing Studio...</p>
       </div>
     );
   }
 
   const currentStepData = STEPS.find(s => s.id === currentStep);
-  const currentItems = ingredients[currentStepData.key] || [];
+  const currentItems = ingredients[currentStepData?.key] || [];
 
   return (
-    <div className="container" style={{ padding: '0 var(--space-16)' }}>
-      {/* Component Scoped CSS */}
+    <div style={{ background: '#ffffff', minHeight: '100vh', paddingBottom: '120px' }}>
       <style>{`
-        .studio-header {
-          padding: var(--space-48) 0 var(--space-32) 0;
-          text-align: center;
+        /* --- Premium Layout --- */
+        .builder-container {
+          max-width: 1400px;
+          margin: 0 auto;
+          padding: 40px 24px;
         }
-        
-        .studio-layout {
+
+        .builder-grid {
           display: grid;
           grid-template-columns: 1fr;
-          gap: var(--space-40);
-          padding-bottom: 120px;
+          gap: 40px;
         }
 
-        /* Sophisticated Progress Stepper */
-        .stepper-container {
+        @media (min-width: 1024px) {
+          .builder-grid {
+            grid-template-columns: 1fr 400px;
+            gap: 64px;
+            align-items: start;
+          }
+        }
+
+        /* --- Header & Typography --- */
+        .studio-title {
+          font-family: var(--font-serif);
+          font-size: clamp(2.5rem, 4vw, 3.5rem);
+          font-weight: 800;
+          color: #0f172a;
+          line-height: 1.1;
+          margin-bottom: 8px;
+          letter-spacing: -0.02em;
+        }
+
+        /* --- Modern Progress Stepper --- */
+        .stepper-nav {
           display: flex;
-          align-items: center;
+          gap: 8px;
+          margin-bottom: 48px;
+        }
+
+        .step-pill {
+          flex: 1;
+          height: 6px;
+          background: #f1f5f9;
+          border-radius: 99px;
+          position: relative;
+          overflow: hidden;
+          cursor: pointer;
+        }
+
+        .step-pill-fill {
+          position: absolute;
+          top: 0; left: 0; bottom: 0;
+          background: var(--primary);
+          border-radius: 99px;
+          transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .step-labels {
+          display: flex;
           justify-content: space-between;
-          position: relative;
-          margin-bottom: var(--space-48);
-          max-width: 600px;
-          margin-left: auto;
-          margin-right: auto;
-        }
-        
-        .stepper-line {
-          position: absolute;
-          top: 20px;
-          left: 0;
-          right: 0;
-          height: 2px;
-          background: var(--border-light);
-          z-index: 1;
-        }
-        
-        .stepper-progress {
-          position: absolute;
-          top: 20px;
-          left: 0;
-          height: 2px;
-          background: var(--primary);
-          z-index: 2;
-          transition: width var(--transition-slow);
-        }
-
-        .step-node {
-          position: relative;
-          z-index: 3;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: var(--space-8);
-          background: var(--bg-main);
-          padding: 0 var(--space-8);
-        }
-
-        .step-indicator {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          margin-top: 12px;
+          font-size: 0.8rem;
           font-weight: 700;
-          font-size: 1rem;
-          background: var(--surface);
-          border: 2px solid var(--border);
-          color: var(--text-muted);
-          transition: all var(--transition-normal);
-        }
-
-        .step-node.active .step-indicator {
-          border-color: var(--primary);
-          color: var(--primary);
-          box-shadow: 0 0 0 6px var(--primary-soft);
-        }
-
-        .step-node.completed .step-indicator {
-          background: var(--primary);
-          border-color: var(--primary);
-          color: var(--text-inverse);
-        }
-
-        .step-label {
-          font-size: 0.75rem;
-          font-weight: 700;
-          color: var(--text-muted);
+          color: #94a3b8;
           text-transform: uppercase;
           letter-spacing: 0.05em;
-          transition: color var(--transition-fast);
         }
 
-        .step-node.active .step-label,
-        .step-node.completed .step-label {
-          color: var(--text-main);
+        .step-label.active { color: var(--primary); }
+        .step-label.completed { color: #0f172a; }
+
+        /* --- Cinematic Selection Cards --- */
+        @keyframes slideInUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Visual Ingredient Grid */
-        .ingredient-grid {
+        .selection-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-          gap: var(--space-20);
-          margin-bottom: var(--space-48);
+          grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+          gap: 24px;
         }
 
         .ingredient-card {
           position: relative;
-          background: var(--surface);
-          border: 1px solid var(--border-light);
-          border-radius: var(--radius-lg);
+          height: 280px;
+          border-radius: 24px;
           overflow: hidden;
-          transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-fast);
           cursor: pointer;
-          outline: none;
-          text-align: left;
-          padding: 0;
-          display: flex;
-          flex-direction: column;
+          border: 2px solid transparent;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s, border-color 0.2s;
+          opacity: 0; /* For animation */
+          animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         .ingredient-card:hover {
-          box-shadow: var(--shadow-md);
-          transform: translateY(-4px);
+          transform: translateY(-6px);
+          box-shadow: 0 20px 40px rgba(0,0,0,0.12);
         }
 
         .ingredient-card.selected {
           border-color: var(--primary);
-          box-shadow: 0 8px 20px rgba(218, 41, 28, 0.15);
-        }
-
-        .ingredient-img-wrap {
-          width: 100%;
-          height: 160px;
-          position: relative;
-          overflow: hidden;
-          background: var(--bg-secondary);
+          box-shadow: 0 0 0 4px rgba(218, 41, 28, 0.15), 0 20px 40px rgba(218, 41, 28, 0.15);
         }
 
         .ingredient-img {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          transition: transform var(--transition-slow);
+          transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .ingredient-card:hover .ingredient-img {
-          transform: scale(1.05);
+        .ingredient-card:hover .ingredient-img, .ingredient-card.selected .ingredient-img {
+          transform: scale(1.08);
         }
 
-        .ingredient-card.selected .ingredient-img {
-          transform: scale(1.05);
-        }
-
-        .selection-badge {
+        .ingredient-overlay {
           position: absolute;
-          top: 12px;
-          right: 12px;
-          width: 32px;
-          height: 32px;
-          background: var(--primary);
+          inset: 0;
+          background: linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.4) 40%, transparent 100%);
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          padding: 24px;
+          transition: background 0.3s;
+        }
+
+        .ingredient-card.selected .ingredient-overlay {
+          background: linear-gradient(to top, rgba(218, 41, 28, 0.95) 0%, rgba(218, 41, 28, 0.4) 50%, transparent 100%);
+        }
+
+        .ingredient-name {
           color: white;
+          font-size: 1.2rem;
+          font-weight: 700;
+          margin-bottom: 4px;
+          line-height: 1.2;
+        }
+
+        .ingredient-price {
+          color: rgba(255, 255, 255, 0.8);
+          font-weight: 600;
+          font-size: 0.95rem;
+        }
+
+        .selected-badge {
+          position: absolute;
+          top: 16px; right: 16px;
+          background: white;
+          color: var(--primary);
+          width: 32px; height: 32px;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
           opacity: 0;
           transform: scale(0.8);
-          transition: all var(--transition-fast);
-          box-shadow: var(--shadow-sm);
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
-        .ingredient-card.selected .selection-badge {
+        .ingredient-card.selected .selected-badge {
           opacity: 1;
           transform: scale(1);
         }
 
-        .ingredient-content {
-          padding: var(--space-16);
+        /* --- Dark Mode Smart Receipt --- */
+        .receipt-sidebar {
+          background: #0f172a;
+          border-radius: 32px;
+          padding: 40px 32px;
+          color: white;
+          box-shadow: 0 20px 50px rgba(15, 23, 42, 0.2);
+          position: sticky;
+          top: 100px;
           display: flex;
           flex-direction: column;
-          flex-grow: 1;
-          background: var(--surface);
-          transition: background var(--transition-fast);
         }
 
-        .ingredient-card.selected .ingredient-content {
-          background: var(--primary-soft);
-        }
-
-        /* Persistent Summary Sidebar */
-        .summary-sidebar {
-          display: none;
-        }
-
-        .receipt-card {
-          background: var(--surface);
-          border: 1px solid var(--border-light);
-          border-radius: var(--radius-lg);
-          overflow: hidden;
-          box-shadow: var(--shadow-lg);
-        }
-
-        .receipt-hero {
-          width: 100%;
-          height: 140px;
-          background-image: url('${SUMMARY_HERO_IMG}');
-          background-size: cover;
-          background-position: center;
-          position: relative;
-        }
-        
-        .receipt-hero::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(to bottom, transparent 40%, var(--surface) 100%);
-        }
-
-        .receipt-body {
-          padding: 0 var(--space-24) var(--space-24) var(--space-24);
+        .receipt-title {
+          font-family: var(--font-serif);
+          font-size: 2rem;
+          font-weight: 800;
+          margin-bottom: 32px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
         }
 
         .receipt-list {
-          list-style: none;
           display: flex;
           flex-direction: column;
-          gap: var(--space-16);
-          margin-top: var(--space-8);
+          gap: 24px;
+          margin-bottom: 40px;
         }
 
         .receipt-item {
           display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          border-bottom: 1px dashed var(--border-light);
-          padding-bottom: var(--space-12);
+          flex-direction: column;
+          gap: 4px;
         }
 
-        .receipt-label {
+        .r-label {
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: #64748b;
+          font-weight: 700;
+        }
+
+        .r-value {
+          font-size: 1.1rem;
           font-weight: 600;
-          font-size: 0.9rem;
-          color: var(--text-main);
+          color: white;
+          display: flex;
+          justify-content: space-between;
         }
 
-        .receipt-value {
-          font-size: 0.9rem;
-          color: var(--text-secondary);
-          text-align: right;
-          max-width: 60%;
-        }
-
-        .receipt-empty {
-          font-size: 0.9rem;
-          color: var(--text-muted);
+        .r-value.empty {
+          color: #475569;
           font-style: italic;
         }
 
-        /* Mobile Action Bar */
-        .mobile-action-bar {
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          background: var(--surface);
-          border-top: 1px solid var(--border-light);
-          padding: var(--space-16) var(--space-20);
-          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
-          z-index: var(--z-fixed);
+        .receipt-total {
+          margin-top: auto;
+          padding-top: 32px;
+          border-top: 1px solid rgba(255,255,255,0.1);
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+        }
+
+        .btn-next-desktop {
+          width: 100%;
+          background: white;
+          color: #0f172a;
+          border: none;
+          padding: 20px;
+          border-radius: 16px;
+          font-size: 1.1rem;
+          font-weight: 800;
+          margin-top: 32px;
+          cursor: pointer;
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding-bottom: calc(var(--space-16) + env(safe-area-inset-bottom));
+          transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .desktop-actions {
-          display: none;
+        .btn-next-desktop:hover:not(:disabled) {
+          transform: translateY(-4px);
+          box-shadow: 0 10px 30px rgba(255,255,255,0.2);
         }
+
+        .btn-next-desktop:disabled {
+          background: #334155;
+          color: #64748b;
+          cursor: not-allowed;
+        }
+
+        /* --- Sticky Mobile Footer --- */
+        .mobile-action-bar {
+          position: fixed;
+          bottom: 0; left: 0; right: 0;
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(16px);
+          padding: 16px 24px calc(16px + env(safe-area-inset-bottom)) 24px;
+          border-top: 1px solid rgba(0,0,0,0.05);
+          z-index: 100;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
+        }
+        
+        .desktop-only-sidebar { display: none; }
 
         @media (min-width: 1024px) {
-          .studio-layout {
-            grid-template-columns: 2fr 1fr;
-            padding-bottom: var(--space-64);
-            align-items: start;
-          }
-          .summary-sidebar {
-            display: block;
-            position: sticky;
-            top: 100px;
-          }
-          .mobile-action-bar {
-            display: none;
-          }
-          .desktop-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: var(--space-32);
-            padding-top: var(--space-24);
-            border-top: 1px solid var(--border-light);
-          }
+          .mobile-action-bar { display: none; }
+          .desktop-only-sidebar { display: flex; }
         }
       `}</style>
 
-      {/* --- STUDIO HEADER --- */}
-      <div className="studio-header">
-        <h1 className="text-display">Pizza Craft Studio</h1>
-        <p className="text-body-lg text-secondary" style={{ marginTop: 'var(--space-8)' }}>
-          Design your perfect pizza with our premium ingredients.
-        </p>
-      </div>
-
-      <div className="studio-layout">
-        {/* --- LEFT: BUILDER WORKSPACE --- */}
-        <div>
-          {/* Progress Stepper */}
-          <div className="stepper-container">
-            <div className="stepper-line" />
-            <div 
-              className="stepper-progress" 
-              style={{ width: `${((currentStep - 1) / (STEPS.length - 1)) * 100}%` }} 
-            />
-            {STEPS.map((step) => {
-              const isActive = currentStep === step.id;
-              const isCompleted = currentStep > step.id;
-              return (
-                <div key={step.id} className={`step-node ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}>
-                  <div className="step-indicator">
-                    {isCompleted ? <CheckIcon /> : step.id}
-                  </div>
-                  <span className="step-label desktop-only">{step.label}</span>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Section Header */}
-          <div style={{ marginBottom: 'var(--space-24)' }}>
-            <h2 className="text-h2">{currentStepData.label}</h2>
-            <p className="text-body text-secondary">{currentStepData.subtitle}</p>
-          </div>
-
-          {/* Ingredient Grid */}
-          <div className="ingredient-grid">
-            {currentItems.map((item) => {
-              let isSelected = false;
-              if (currentStep === 1) isSelected = selectedBase?._id === item._id;
-              if (currentStep === 2) isSelected = selectedSauce?._id === item._id;
-              if (currentStep === 3) isSelected = selectedCheese?._id === item._id;
-              if (currentStep === 4) isSelected = selectedVeggies.some(v => v._id === item._id);
-
-              const handleSelect = () => {
-                if (currentStep === 1) setSelectedBase(item);
-                if (currentStep === 2) setSelectedSauce(item);
-                if (currentStep === 3) setSelectedCheese(item);
-                if (currentStep === 4) toggleVeggie(item);
-              };
-
-              const imgSrc = INGREDIENT_IMAGES[item.name] || DEFAULT_IMAGES[item.category];
-
-              return (
-                <button 
-                  key={item._id} 
-                  type="button"
-                  className={`ingredient-card ${isSelected ? 'selected' : ''}`}
-                  onClick={handleSelect}
-                  aria-pressed={isSelected}
-                >
-                  <div className="ingredient-img-wrap">
-                    <img 
-                      src={imgSrc} 
-                      alt={item.name} 
-                      className="ingredient-img"
-                      onError={(e) => { e.target.style.display = 'none'; }}
-                    />
-                    <div className="selection-badge">
-                      <CheckIcon />
-                    </div>
-                  </div>
-                  <div className="ingredient-content">
-                    <h3 className="text-body" style={{ fontWeight: '700', color: 'var(--text-main)', marginBottom: 'var(--space-8)' }}>
-                      {item.name}
-                    </h3>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 'auto' }}>
-                      <span className="text-price" style={{ color: isSelected ? 'var(--primary)' : 'var(--text-main)' }}>
-                        +{formatPrice(item.price)}
-                      </span>
-                      {item.stock <= 10 && (
-                        <span className="text-caption text-muted">Few left</span>
-                      )}
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Empty Category Fallback */}
-          {currentItems.length === 0 && (
-            <div style={{ textAlign: 'center', padding: 'var(--space-48)', background: 'var(--surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-light)' }}>
-              <p className="text-body text-muted">No {currentStepData.label.toLowerCase()} options currently available.</p>
-            </div>
-          )}
-
-          {/* Desktop Navigation Actions */}
-          <div className="desktop-actions">
-            <button onClick={handleBack} className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <ChevronLeftIcon /> {currentStep === 1 ? 'Back to Menu' : 'Previous Step'}
-            </button>
-            <button onClick={handleNext} disabled={!canGoNext()} className="btn btn-primary" style={{ padding: 'var(--space-12) var(--space-48)' }}>
-              {currentStep === 4 ? 'Review Order →' : 'Next Step →'}
-            </button>
-          </div>
+      <div className="builder-container">
+        
+        {/* Header Area */}
+        <div style={{ marginBottom: '40px' }}>
+          <button onClick={handleBack} style={{ background: 'none', border: 'none', color: '#64748b', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600', cursor: 'pointer', marginBottom: '16px', padding: 0 }}>
+            <ChevronLeftIcon /> {currentStep === 1 ? 'Back to Menu' : 'Previous Step'}
+          </button>
+          <h1 className="studio-title">Pizza Craft Studio</h1>
+          <p style={{ fontSize: '1.15rem', color: '#64748b' }}>Design your perfect pizza with our premium ingredients.</p>
         </div>
 
-        {/* --- RIGHT: PERSISTENT SUMMARY RECEIPT (DESKTOP) --- */}
-        <aside className="summary-sidebar">
-          <div className="receipt-card">
-            <div className="receipt-hero" />
-            <div className="receipt-body">
-              <h3 className="text-h3" style={{ marginBottom: 'var(--space-16)' }}>Your Masterpiece</h3>
-              <ul className="receipt-list">
-                <li className="receipt-item">
-                  <span className="receipt-label">Crust</span>
-                  {selectedBase ? (
-                    <span className="receipt-value">{selectedBase.name}</span>
-                  ) : (
-                    <span className="receipt-empty">Not selected</span>
-                  )}
-                </li>
-                <li className="receipt-item">
-                  <span className="receipt-label">Sauce</span>
-                  {selectedSauce ? (
-                    <span className="receipt-value">{selectedSauce.name}</span>
-                  ) : (
-                    <span className="receipt-empty">Not selected</span>
-                  )}
-                </li>
-                <li className="receipt-item">
-                  <span className="receipt-label">Cheese</span>
-                  {selectedCheese ? (
-                    <span className="receipt-value">{selectedCheese.name}</span>
-                  ) : (
-                    <span className="receipt-empty">Not selected</span>
-                  )}
-                </li>
-                <li className="receipt-item" style={{ borderBottom: 'none' }}>
-                  <span className="receipt-label">Veggies</span>
-                  {selectedVeggies.length > 0 ? (
-                    <span className="receipt-value">{selectedVeggies.map(v => v.name).join(', ')}</span>
-                  ) : (
-                    <span className="receipt-empty">None added</span>
-                  )}
-                </li>
-              </ul>
+        <div className="builder-grid">
+          
+          {/* LEFT: Selection Area */}
+          <div>
+            {/* Animated Stepper */}
+            <div style={{ marginBottom: '48px' }}>
+              <div className="stepper-nav">
+                {STEPS.map((step) => {
+                  const isCompleted = currentStep > step.id;
+                  const isActive = currentStep === step.id;
+                  let width = '0%';
+                  if (isCompleted) width = '100%';
+                  if (isActive) width = '50%'; // Half filled while on it
 
-              <div style={{ marginTop: 'var(--space-24)', paddingTop: 'var(--space-16)', borderTop: '2px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span className="text-h4">Total</span>
-                <span className="text-price" style={{ fontSize: '1.5rem', color: 'var(--primary)' }}>
+                  return (
+                    <div key={step.id} className="step-pill" onClick={() => step.id < currentStep && setCurrentStep(step.id)}>
+                      <div className="step-pill-fill" style={{ width }} />
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="step-labels">
+                {STEPS.map(step => (
+                  <span key={step.id} className={`step-label ${currentStep === step.id ? 'active' : ''} ${currentStep > step.id ? 'completed' : ''}`}>
+                    {step.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Step Content Header */}
+            <div style={{ marginBottom: '32px' }}>
+              <h2 style={{ fontSize: '2rem', fontWeight: '800', color: '#0f172a', marginBottom: '8px' }}>
+                {currentStepData?.label}
+              </h2>
+              <p style={{ color: '#64748b', fontSize: '1.1rem' }}>{currentStepData?.subtitle}</p>
+            </div>
+
+            {/* Render Cards */}
+            {!animating && (
+              <div className="selection-grid">
+                {currentItems.map((item, index) => {
+                  let isSelected = false;
+                  if (currentStep === 1) isSelected = selectedBase?._id === item._id;
+                  if (currentStep === 2) isSelected = selectedSauce?._id === item._id;
+                  if (currentStep === 3) isSelected = selectedCheese?._id === item._id;
+                  if (currentStep === 4) isSelected = selectedVeggies.some(v => v._id === item._id);
+
+                  const handleSelect = () => {
+                    if (currentStep === 1) setSelectedBase(item);
+                    if (currentStep === 2) setSelectedSauce(item);
+                    if (currentStep === 3) setSelectedCheese(item);
+                    if (currentStep === 4) toggleVeggie(item);
+                  };
+
+                  const imgSrc = INGREDIENT_IMAGES[item.name] || DEFAULT_IMAGES[item.category];
+
+                  return (
+                    <div 
+                      key={item._id} 
+                      className={`ingredient-card ${isSelected ? 'selected' : ''}`}
+                      onClick={handleSelect}
+                      style={{ animationDelay: `${index * 0.1}s` }}
+                    >
+                      <img src={imgSrc} alt={item.name} className="ingredient-img" />
+                      
+                      <div className="selected-badge">
+                        <CheckIcon />
+                      </div>
+
+                      <div className="ingredient-overlay">
+                        <h3 className="ingredient-name">{item.name}</h3>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span className="ingredient-price">+{formatPrice(item.price)}</span>
+                          {item.stock <= 10 && (
+                            <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#fca5a5', background: 'rgba(0,0,0,0.5)', padding: '2px 8px', borderRadius: '4px' }}>
+                              Only {item.stock} left
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            
+            {/* Empty Category Fallback */}
+            {currentItems.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '64px', background: '#f8fafc', borderRadius: '24px', border: '1px dashed #cbd5e1' }}>
+                <p style={{ color: '#64748b', fontSize: '1.1rem' }}>No {currentStepData?.label.toLowerCase()} options available right now.</p>
+              </div>
+            )}
+          </div>
+
+          {/* RIGHT: Dark Mode Smart Receipt (Desktop Only) */}
+          <div className="desktop-only-sidebar">
+            <aside className="receipt-sidebar">
+              <h3 className="receipt-title">
+                <ReceiptIcon /> Your Masterpiece
+              </h3>
+
+              <div className="receipt-list">
+                <div className="receipt-item">
+                  <span className="r-label">Crust Base</span>
+                  <div className={`r-value ${!selectedBase ? 'empty' : ''}`}>
+                    {selectedBase ? selectedBase.name : 'Not selected'}
+                    {selectedBase && <span>{formatPrice(selectedBase.price)}</span>}
+                  </div>
+                </div>
+
+                <div className="receipt-item">
+                  <span className="r-label">Signature Sauce</span>
+                  <div className={`r-value ${!selectedSauce ? 'empty' : ''}`}>
+                    {selectedSauce ? selectedSauce.name : 'Not selected'}
+                    {selectedSauce && <span>{formatPrice(selectedSauce.price)}</span>}
+                  </div>
+                </div>
+
+                <div className="receipt-item">
+                  <span className="r-label">Artisan Cheese</span>
+                  <div className={`r-value ${!selectedCheese ? 'empty' : ''}`}>
+                    {selectedCheese ? selectedCheese.name : 'Not selected'}
+                    {selectedCheese && <span>{formatPrice(selectedCheese.price)}</span>}
+                  </div>
+                </div>
+
+                <div className="receipt-item">
+                  <span className="r-label">Fresh Veggies</span>
+                  <div className={`r-value ${selectedVeggies.length === 0 ? 'empty' : ''}`} style={{ display: 'block', lineHeight: '1.5' }}>
+                    {selectedVeggies.length > 0 
+                      ? selectedVeggies.map(v => (
+                          <div key={v._id} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <span>{v.name}</span>
+                            <span>{formatPrice(v.price)}</span>
+                          </div>
+                        ))
+                      : 'None added'
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <div className="receipt-total">
+                <span style={{ fontSize: '1.25rem', fontWeight: '600', color: '#94a3b8' }}>Total</span>
+                <span style={{ fontSize: '2.5rem', fontWeight: '800', color: '#fca5a5' }}>
                   {formatPrice(totalPrice)}
                 </span>
               </div>
-            </div>
+
+              <button 
+                onClick={handleNext} 
+                disabled={!canGoNext()}
+                className="btn-next-desktop"
+              >
+                <span>{currentStep === 4 ? 'Review Order' : 'Next Step'}</span>
+                <ChevronRightIcon />
+              </button>
+            </aside>
           </div>
-        </aside>
+
+        </div>
       </div>
 
-      {/* --- MOBILE: STICKY BOTTOM BAR --- */}
+      {/* --- Mobile Sticky Action Bar --- */}
       <div className="mobile-action-bar">
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <span className="text-caption text-secondary" style={{ marginBottom: '2px' }}>Order Total</span>
-          <span className="text-price" style={{ fontSize: '1.25rem', color: 'var(--primary)' }}>{formatPrice(totalPrice)}</span>
+        <div>
+          <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Order Total</span>
+          <div style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--primary)', lineHeight: '1.1' }}>
+            {formatPrice(totalPrice)}
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: 'var(--space-8)' }}>
-          {currentStep > 1 && (
-            <button onClick={handleBack} className="btn btn-outline" style={{ padding: 'var(--space-12)', minWidth: '48px' }} aria-label="Previous step">
-              <ChevronLeftIcon />
-            </button>
-          )}
-          <button 
-            onClick={handleNext} 
-            disabled={!canGoNext()} 
-            className="btn btn-primary"
-            style={{ padding: 'var(--space-12) var(--space-24)' }}
-          >
-            {currentStep === 4 ? 'Review Order' : 'Next Step'}
-          </button>
-        </div>
+        
+        <button 
+          onClick={handleNext} 
+          disabled={!canGoNext()}
+          style={{ 
+            background: canGoNext() ? 'var(--primary)' : '#e2e8f0', 
+            color: canGoNext() ? 'white' : '#94a3b8', 
+            border: 'none', 
+            padding: '16px 24px', 
+            borderRadius: '99px', 
+            fontSize: '1rem', 
+            fontWeight: '800', 
+            cursor: canGoNext() ? 'pointer' : 'not-allowed',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            boxShadow: canGoNext() ? '0 10px 20px rgba(218, 41, 28, 0.2)' : 'none'
+          }}
+        >
+          {currentStep === 4 ? 'Review Order' : 'Next Step'} <ChevronRightIcon />
+        </button>
       </div>
 
     </div>

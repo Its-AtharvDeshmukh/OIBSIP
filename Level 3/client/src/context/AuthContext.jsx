@@ -15,7 +15,13 @@ export const AuthProvider = ({ children }) => {
       const adminToken = localStorage.getItem('adminToken');
 
       if (adminToken && adminData) {
-        setAdmin(JSON.parse(adminData));
+        try {
+          setAdmin(JSON.parse(adminData));
+        } catch (err) {
+          localStorage.removeItem('adminUser');
+          localStorage.removeItem('adminToken');
+          setAdmin(null);
+        }
       }
 
       if (userToken) {
@@ -29,7 +35,6 @@ export const AuthProvider = ({ children }) => {
       }
       setLoading(false);
     };
-
     initAuth();
   }, []);
 

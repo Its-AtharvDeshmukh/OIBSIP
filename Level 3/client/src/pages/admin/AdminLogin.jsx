@@ -20,15 +20,12 @@ export default function AdminLogin() {
       setLoading(true);
       setError('');
       
-      // Request admin authentication token from backend
-      const { data } = await API.post('/auth/admin/login', formData);
+      const { data } = await API.post('/admin/login', formData);
       
-      // Store token explicitly as adminToken
       localStorage.setItem('adminToken', data.token);
       if (loginAdmin) {
         loginAdmin(data.token, data.admin);
       }
-
       navigate('/admin/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Access Denied. Invalid administrative credentials.');
@@ -72,7 +69,7 @@ export default function AdminLogin() {
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               className="form-input"
-              placeholder="••••••••••••"
+              placeholder="********"
               required
             />
           </div>

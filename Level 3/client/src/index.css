@@ -406,7 +406,6 @@ h1, h2, h3, h4, .font-display {
    Builder Additions & Phase Updates
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap');
 
 :root {
   --primary: #DA291C;

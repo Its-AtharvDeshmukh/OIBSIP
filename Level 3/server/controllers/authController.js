@@ -9,7 +9,7 @@ const generateToken = (id, role = 'user') => {
   });
 };
 
-export const registerUser = async (req, res) => {
+export const registerUser = async (req, res,next) => {
   try {
     const { name, email, password, confirmPassword } = req.body;
 
@@ -42,7 +42,9 @@ export const registerUser = async (req, res) => {
         name: name.trim(),
         email: cleanEmail,
         password,
+        role: 'user', // SECURITY: Strictly force role
         isVerified: false,
+        isActive: true, // Accounts are active by default
         verificationToken
       });
     }
@@ -59,6 +61,7 @@ export const registerUser = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 export const verifyEmail = async (req, res) => {
   try {
@@ -96,6 +99,14 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ success: false, message: 'Invalid email or password.' });
     }
 
+    // SECURITY: Prevent deactivated students from logging in
+    if (user.isActive === false) {
+      return res.status(403).json({
+        success: false,
+        message: 'Your account has been suspended. Please contact administration.'
+      });
+    }
+
     if (!user.isVerified) {
       return res.status(403).json({
         success: false,
@@ -103,7 +114,7 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    const token = generateToken(user._id, 'user');
+    const token = generateToken(user._id, user.role);
 
     res.status(200).json({
       success: true,
@@ -112,13 +123,15 @@ export const loginUser = async (req, res) => {
       user: {
         id: user._id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        role: user.role
       }
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 export const forgotPassword = async (req, res) => {
   try {

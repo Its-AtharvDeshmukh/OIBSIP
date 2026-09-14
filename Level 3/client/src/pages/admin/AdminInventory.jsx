@@ -4,7 +4,7 @@ import API from '../../services/api';
 import { useToast } from '../../context/ToastContext';
 
 const formatPrice = (amount) => {
-  if (amount == null) return '₹0';
+  if (amount == null) return '';
   return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(amount);
 };
 
@@ -20,8 +20,7 @@ export default function AdminInventory() {
   const fetchInventory = async () => {
     try {
       setLoading(true);
-      // Using admin-specific or standard inventory management endpoint per backend contract
-      const { data } = await API.get('/inventory');
+      const { data } = await API.get('/admin/inventory');
       setItems(Array.isArray(data) ? data : (data.data || []));
     } catch (err) {
       setError('Failed to fetch inventory data.');

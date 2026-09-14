@@ -33,7 +33,6 @@ export default function ReviewOrder() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState('');
 
-  // Protect against direct navigation without building a pizza
   useEffect(() => {
     if (!selectedBase) {
       navigate('/builder');
@@ -54,8 +53,6 @@ export default function ReviewOrder() {
       setIsProcessing(true);
       setError('');
 
-      // 1. Initialize Razorpay Order via Backend
-      // EXACT match to what paymentController.js expects
       const { data: orderResponse } = await API.post('/payment/create-order', {
         pizzaConfig: {
           base: selectedBase.name,
@@ -67,13 +64,12 @@ export default function ReviewOrder() {
           name: user?.name || 'Guest',
           email: user?.email || 'guest@example.com',
           address: address,
-          phone: '9999999999' // Standard placeholder
+          phone: '9999999999' 
         }
       });
 
       const { orderId, razorpayOrderId, amount, currency, keyId } = orderResponse;
 
-      // 2. Configure Razorpay UI
       const options = {
         key: keyId,
         amount: amount,
@@ -86,13 +82,12 @@ export default function ReviewOrder() {
           email: user?.email || '',
         },
         theme: {
-          color: "#DA291C" // Matches our --primary brand color
+          color: "#DA291C" 
         },
         handler: async function (response) {
           try {
-            setIsProcessing(true); // Keep loading state active during verification
+            setIsProcessing(true); 
             
-            // 3. Verify Payment with Backend and Decrement Stock
             await API.post('/payment/verify', {
               orderId: orderId,
               razorpay_order_id: response.razorpay_order_id,
@@ -100,7 +95,6 @@ export default function ReviewOrder() {
               razorpay_signature: response.razorpay_signature
             });
 
-            // 4. Cleanup & Redirect
             resetCustomPizza();
             navigate(`/order/success/${orderId}`);
           } catch (verifyErr) {
@@ -124,7 +118,7 @@ export default function ReviewOrder() {
     }
   };
 
-  if (!selectedBase) return null; // Prevent flicker while redirecting
+  if (!selectedBase) return null; 
 
   return (
     <div className="container">
@@ -182,7 +176,6 @@ export default function ReviewOrder() {
 
       <div className="review-layout">
         
-        {/* Left Column: Delivery Form */}
         <div className="checkout-section">
           <h2 className="text-h3" style={{ marginBottom: 'var(--space-24)' }}>Delivery Details</h2>
           
@@ -223,7 +216,6 @@ export default function ReviewOrder() {
           </form>
         </div>
 
-        {/* Right Column: Order Summary */}
         <div className="checkout-section sticky-summary">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 'var(--space-24)' }}>
             <h2 className="text-h3">Order Summary</h2>

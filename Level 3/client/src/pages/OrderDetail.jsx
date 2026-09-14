@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import API from '../services/api';
 
 const formatPrice = (amount) => {
-  if (amount == null) return '₹0';
+  if (amount == null) return '';
   return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(amount);
 };
 
@@ -41,12 +41,6 @@ export default function OrderDetail() {
     );
   }
 
-  // Safely extract populated data or fallback to raw IDs
-  const getIngredientName = (ingredient) => {
-    if (!ingredient) return 'None';
-    return ingredient.name || 'Custom Ingredient';
-  };
-
   return (
     <div className="container" style={{ padding: 'var(--space-48) var(--space-16)' }}>
       <button onClick={() => navigate('/orders')} className="text-body-sm text-secondary" style={{ marginBottom: 'var(--space-24)', display: 'inline-block' }}>
@@ -59,27 +53,27 @@ export default function OrderDetail() {
             <h1 className="text-h2" style={{ marginBottom: 'var(--space-4)' }}>Order Receipt</h1>
             <p className="text-body-sm text-secondary" style={{ fontFamily: 'monospace' }}>#{order._id}</p>
           </div>
-          <span className="badge badge-primary">{order.status}</span>
+          <span className="badge badge-primary">{order.orderStatus}</span>
         </div>
 
         <h3 className="text-h4" style={{ marginBottom: 'var(--space-16)' }}>Pizza Configuration</h3>
         <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 'var(--space-12)', marginBottom: 'var(--space-32)' }}>
           <li style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span className="text-body-sm text-secondary">Base</span>
-            <span className="text-body-sm" style={{ fontWeight: '500' }}>{getIngredientName(order.base)}</span>
+            <span className="text-body-sm" style={{ fontWeight: '500' }}>{order.pizzaConfig?.base || 'Not specified'}</span>
           </li>
           <li style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span className="text-body-sm text-secondary">Sauce</span>
-            <span className="text-body-sm" style={{ fontWeight: '500' }}>{getIngredientName(order.sauce)}</span>
+            <span className="text-body-sm" style={{ fontWeight: '500' }}>{order.pizzaConfig?.sauce || 'Not specified'}</span>
           </li>
           <li style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span className="text-body-sm text-secondary">Cheese</span>
-            <span className="text-body-sm" style={{ fontWeight: '500' }}>{getIngredientName(order.cheese)}</span>
+            <span className="text-body-sm" style={{ fontWeight: '500' }}>{order.pizzaConfig?.cheese || 'Not specified'}</span>
           </li>
           <li style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span className="text-body-sm text-secondary">Vegetables</span>
             <span className="text-body-sm" style={{ fontWeight: '500', textAlign: 'right', maxWidth: '60%' }}>
-              {order.veggies && order.veggies.length > 0 ? order.veggies.map(getIngredientName).join(', ') : 'None'}
+              {order.pizzaConfig?.veggies && order.pizzaConfig.veggies.length > 0 ? order.pizzaConfig.veggies.join(', ') : 'None'}
             </span>
           </li>
         </ul>
@@ -87,13 +81,13 @@ export default function OrderDetail() {
         <div style={{ background: 'var(--bg-secondary)', padding: 'var(--space-16)', borderRadius: 'var(--radius-md)', marginBottom: 'var(--space-24)' }}>
           <h3 className="text-body-sm" style={{ fontWeight: '600', marginBottom: 'var(--space-8)' }}>Delivery Address</h3>
           <p className="text-body-sm text-secondary" style={{ whiteSpace: 'pre-wrap' }}>
-            {order.deliveryAddress || 'Address not provided'}
+            {order.customerInfo?.address || 'Address not provided'}
           </p>
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '2px dashed var(--border)', paddingTop: 'var(--space-24)', marginBottom: 'var(--space-32)' }}>
           <span className="text-h3">Total Paid</span>
-          <span className="text-price" style={{ fontSize: '1.5rem', color: 'var(--primary)' }}>{formatPrice(order.totalAmount || order.amount)}</span>
+          <span className="text-price" style={{ fontSize: '1.5rem', color: 'var(--primary)' }}>{formatPrice(order.totalAmount)}</span>
         </div>
 
         <div style={{ display: 'flex', gap: 'var(--space-16)' }}>
